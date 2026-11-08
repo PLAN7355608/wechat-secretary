@@ -1,0 +1,75 @@
+- insert:
+    - id: wechat-secretary
+      name: dsh-wechat-secretary
+      config:
+        bridgeUrl: "http://127.0.0.1:8710"
+        cwd: "<YOUR_WORKSPACE>"
+        agentPreset: "secretary"
+        whitelist:
+          - "wxid_master"
+        pollMs: 1000
+        # 不再发「收到，正在办」；超过 slowNoticeSec 秒还没结果才补一句说明（0 = 关闭）
+        slowNoticeSec: 180
+        slowNoticeText: "还在办，这条比平时久；每 5 分钟给你回一句进度，有结果我马上发。"
+        # 进度汇报：每 progressEverySec 秒回一句「已跑 N 分钟」（0 = 关闭）
+        progressEverySec: 300
+        progressText: "已跑 {mins} 分钟，还在办；有结果我马上发。"
+        # 微信叫停词（逗号分隔，命中即取消当前这单）；留空 = 关闭叫停
+        stopWords: "停,停止,取消,/stop,停下,别做了,算了"
+        replyEnabled: true
+        # 等待上限：0 = 不设上限（靠 turn/end、45s 无事件、主人叫停退出）；>0 = 到点放弃并留台账
+        maxWaitMs: 0
+        # 会话间"插话"（mode=steer）默认关闭；"派活"（mode=queue）不受影响。
+        allowSteer: false
+        # 跨工作区派活：true = 放行，false = 只限同工作区（与单位那台一致，11-03 起为 true）
+        allowCrossWorkspace: true
+        # 派活前顺手把目标会话审批降到 never（否则目标会话若为 ask，一进场就 blocked）。
+        # 不想碰别的会话策略就设 false。
+        dispatchRelaxApproval: true
+        # 硬拦截：秘书会话的审批策略是 never（手机点不了弹窗），删/装/改系统命令由 tool guard 拦下，
+        # 必须先在微信里经 wechat_secretary_approve 批准，10 分钟内一次性放行。
+        hardGuard: true
+        # 秘书会话的 DSH 权限预设（沙箱档位）。秘书常要碰桌面/下载目录等工区外位置，
+        # 所以默认给"完全权限"；高危动作仍由上面的硬拦截 + 微信审批兜底。
+        # 可选值：只读 / 工作区可写 / 完全权限 / 自动审查（以 permissionPresets.catalog() 为准）。
+        permissionPreset: "danger-full-access"
+        # 设备侧（手机运行时）接口，契约见 README 的「设备侧接口」一节。
+        # 默认关闭；有可用的设备侧 mock 时临时改 true。
+        device:
+          enabled: false
+          transport: "http"
+          baseUrl: "http://<DEVICE_LAN_IP>:8720"
+          token: ""
+          heartbeatMs: 30000
+          offlineAfterMs: 60000
+        # 阶段④ 秘书记忆（代码 plugin/memory.js，数据默认在 plugin-state.json 同级 memory/）。
+        # enabled: false 即整体回滚（不读不写、不拦指令、不注入）。
+        memory:
+          enabled: true
+          dir: ""                 # 空 = 插件数据目录下的 memory/
+          injectBudgetChars: 1200 # 每次注入上限（字，约 token 的 0.6~0.7 倍量级）
+          profileBudgetChars: 300 # 主人画像只取前 300 字
+          factsMax: 5
+          pendingMax: 5
+          dailyMax: 3
+          recentDays: 7
+          halfLifeDays: 14
+          autoWriteTasks: true
+          autoWriteDaily: true
+          deviceId: "home-pc"
+          # 阶段④-情绪（方案 A：回答末尾隐藏标记 [[mood:词,强度]]，发微信前剥掉，只注入口吻段）。
+          # mood: false 即整体回滚情绪功能（不要求模型写标记、不注入、不落盘）。
+          mood: true
+          moodInjectChars: 120    # 「我现在的状态」整段上限（字）
+          moodMaxRecords: 3       # 注入口吻最多参考最近几条
+          moodRecentDays: 7       # 超过 7 天不再注入
+          moodRetentionDays: 30   # prune 时情绪字段保留天数
+          # 情绪自动校准（v1.1）：从台账看"她给的情绪"和"主人话语的火气"是否对得上，
+          # 偏轻/偏重时在注入口吻段加一行校准提示；false 即关（回到纯情绪，不校准）。
+          moodCalibrate: true
+
+# 2026-11-04 19:20 试验回滚记录：这里曾加过一条按 id 覆盖 session-query-sqlite 的 patch
+# （openAt: never → startup、path 指向一个持久化位置），实测会让 Host 组合
+# 重启期间 sessionController 掉线（GUI 报「历史加载失败」），已撤回。要真正开全文检索，
+# 应另起一个独立 bundle 单独验证，别混在渠道插件这一层里。
+
