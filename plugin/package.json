@@ -1,0 +1,42 @@
+{
+  "name": "dsh-wechat-secretary",
+  "version": "1.0.0",
+  "private": true,
+  "description": "微信秘书（Host 半边）：轮询本地 bridge 收件箱，把白名单会话的消息交给 DSH 会话执行并回发结果；含 WorkItem 台账、跨会话派活、记忆与情绪。桥（微信客户端操作）由使用者自备。",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "memory.js",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": "*"
+  },
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "wechat",
+    "secretary",
+    "deepseek-harness",
+    "agpl"
+  ],
+  "license": "AGPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PLAN7355608/wechat-secretary.git"
+  },
+  "homepage": "https://github.com/PLAN7355608/wechat-secretary#readme"
+}
