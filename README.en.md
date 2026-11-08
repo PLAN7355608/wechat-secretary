@@ -121,7 +121,7 @@ The bridge must distinguish messages **to** the alt account from messages **from
 
 ## License
 
-[AGPL-3.0](LICENSE). Read the bilingual disclaimer at the top first. The code is provided "as is", without warranty of any kind.
+[MIT](LICENSE). You may use, copy, modify, distribute and sell this code freely, provided you keep the copyright and permission notice; the code is provided "as is", without warranty of any kind. Read the bilingual disclaimer at the top first.
 
 ## Device-side interface
 

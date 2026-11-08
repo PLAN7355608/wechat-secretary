@@ -9,7 +9,7 @@
       "patch": "./cordis.patch.yml"
     }
   },
-  "license": "AGPL-3.0",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/PLAN7355608/wechat-secretary.git"
