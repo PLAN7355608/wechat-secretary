@@ -1,0 +1,17 @@
+{
+  "name": "dsh-secretary-preset",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "秘书模式（Secretary）：在对话渠道里指挥电脑上的 DSH agent；渠道可插拔，只认主人，收发文字/文件，派会话干活并回报。",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "license": "AGPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PLAN7355608/wechat-secretary.git"
+  }
+}
